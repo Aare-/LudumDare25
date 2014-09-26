@@ -1,0 +1,27 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.sub.vision.actors.SpriteActor;
+
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.Array;
+
+public class PooOverlord extends Group{
+	
+	private Array<SpriteActor> poos;
+	
+	public PooOverlord(){
+		poos = new Array<SpriteActor>();
+		
+	}
+	
+	public void restart(int level){
+		while(poos.size > 0)
+			poos.pop()
+				.remove();
+		
+	}
+	
+	public void makePoo(float x, float y){
+		
+	}
+}

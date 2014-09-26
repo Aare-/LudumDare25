@@ -1,0 +1,81 @@
+package pl.subfty.sub.vision.actors;
+
+import pl.subfty.sub.vision.Art;
+import pl.subfty.sub.vision.Art.SPRITES;
+
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Logger;
+
+public class SpriteActor extends Actor{
+	Logger l = new Logger("SpriteActor", Logger.DEBUG);
+	
+	private Sprite sprite;
+	
+	public boolean expiliteDisableBlending=false;
+	public float alpha;
+	
+	public SpriteActor(){
+		sprite = new Sprite();
+		alpha = 1;
+		width = 0;
+		height = 0;
+	}
+	public SpriteActor(SPRITES sprite, float width){
+		this();
+		setSprite(sprite, width);
+	}
+	public SpriteActor(SPRITES sprite, float width, float height){
+		this();
+		setSprite(sprite, width, height);
+	}
+	
+	public void setSprite(SPRITES sprite, float width){
+		TextureRegion r = Art.atlases[sprite.atlas.ordinal()]
+				 			 .findRegion(sprite.name);
+		this.sprite.setRegion(r);
+		this.setSize(width, 
+					 ((float)r.getRegionHeight())/((float)r.getRegionWidth())* width);
+	}
+	public void setSprite(SPRITES sprite, float width, float height){
+		TextureRegion r = Art.atlases[sprite.atlas.ordinal()]
+	 			 			 .findRegion(sprite.name);
+		this.sprite.setRegion(r);
+		this.setSize(width,height);
+	}
+	
+	@Override
+	public void draw(SpriteBatch sbatch, float parentAlpha){
+		if(sprite == null || sprite.getTexture() == null)
+			return;
+		
+	  //LOGIC
+		//TODO: move this to setters
+		sprite.setScale(this.getScaleX(), 
+						this.getScaleY());
+		sprite.setPosition(this.getX(), 
+						   this.getY());
+		sprite.setColor(this.getColor());
+		sprite.setOrigin(this.getOriginX(), 
+						 this.getOriginY());
+		sprite.setRotation(this.getRotation());
+		//TODO: move to setters, set using "game size"
+		sprite.setSize(this.getWidth(),
+					   this.getHeight());
+		
+	  //DRAW
+		if(expiliteDisableBlending)
+		    sbatch.disableBlending();
+		sprite.draw(sbatch, parentAlpha*alpha);
+		if(expiliteDisableBlending)
+			sbatch.enableBlending();
+	}
+	
+	public void fillScreen(){
+		this.setPosition(0,0);
+		this.setSize(Alc.SCREEN_WIDTH, 
+					 Alc.SCREEN_HEIGHT);
+	}
+}

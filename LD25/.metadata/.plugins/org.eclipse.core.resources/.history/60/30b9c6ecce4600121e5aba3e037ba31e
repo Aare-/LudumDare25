@@ -1,0 +1,151 @@
+package pl.submachine.sub.vision;
+
+import pl.submachine.sub.audio.SSound;
+import pl.submachine.sub.interfaces.Callback;
+import pl.submachine.sub.vision.fonts.BFonts;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Logger;
+
+public class Art{
+	private static Logger l = new Logger("Art", Logger.DEBUG);
+	
+
+	public static SSound sound;
+	
+	public static enum ATLASES{
+		BOARD_TILES("textures/boardTiles/boardTiles"),
+		BOARD_TILES_LAYOUT("textures/boardTilesLayout/boardTilesLayout"),
+		BOARD_TOKENS("textures/boardTokens/boardTokens"),
+		CARDS("textures/cards/cards");
+		
+		public final String patch;
+		ATLASES(String patch){
+			this.patch = patch;
+		}
+	}
+
+  //SPRITES
+	public static enum SPRITES{
+	  //BOARD TILES
+		CHAPEL("BTChapel", ATLASES.BOARD_TILES),
+		RADIO_ROOM("BTRadioRoom", ATLASES.BOARD_TILES),
+		DINING_HALL("BTDiningHall", ATLASES.BOARD_TILES),
+		INFIRMARY("BTInfirmary", ATLASES.BOARD_TILES),
+		EXCERCISE_YARD("BTExcerciseYard", ATLASES.BOARD_TILES),
+		VISITING_AREA("BTVisitingArea", ATLASES.BOARD_TILES),
+		WORKSHOP("BTWorkshop", ATLASES.BOARD_TILES),
+		RECREATIONAL_ROOM("BTRecreationalRoom", ATLASES.BOARD_TILES),
+		CELL_BLOCK("BTCellBlock", ATLASES.BOARD_TILES),
+		LAUNDRY_ROOM("BTLaundryRoom", ATLASES.BOARD_TILES),
+		GUARDS_ROOM("BTGuardsRoom", ATLASES.BOARD_TILES),
+		WARDENS_OFFICE("BTWardensOffice", ATLASES.BOARD_TILES),
+		
+	  //TILE LAYOUTS
+		TILE_L_SILVER_ONE("BTSilverOne", ATLASES.BOARD_TILES_LAYOUT),
+		TILE_L_SILVER_TWO("BTSilverTwo", ATLASES.BOARD_TILES_LAYOUT),
+		TILE_L_BRONZE_ONE("BTBronzeOne", ATLASES.BOARD_TILES_LAYOUT),
+		TILE_L_BRONZE_TWO("BTBronzeTwo", ATLASES.BOARD_TILES_LAYOUT),
+		
+	  //BOARD TOKENS
+		CHEF("BTKChef", ATLASES.BOARD_TOKENS),
+		CHOOSE_BLACK("BTKChooseBlackmail", ATLASES.BOARD_TOKENS),
+		CHOOSE_ITEM("BTKChooseItem", ATLASES.BOARD_TOKENS),
+		CLOTH("BTKCloth", ATLASES.BOARD_TOKENS),
+		DISCARD_BLACKMAIL("BTKDiscardBlackmail", ATLASES.BOARD_TOKENS),
+		DRAW_BLACKMAIL("BTKDrawBlackmail", ATLASES.BOARD_TOKENS),
+		DRUG("BTKDrug", ATLASES.BOARD_TOKENS),
+		FREE_ACTION("BTKFreeAction", ATLASES.BOARD_TOKENS),
+		GUARD("BTKGuard", ATLASES.BOARD_TOKENS),
+		GUARD_MARKER("BTKGuardMarker", ATLASES.BOARD_TOKENS),
+		ITEM_OR_CASH("BTKItemOrCash", ATLASES.BOARD_TOKENS),
+		MONEY_PLAYER_INDICATOR("BTKPlayerMoney", ATLASES.BOARD_TOKENS),
+		STAMINA_PLAYER_INDICATOR("BTKPlayerStamina", ATLASES.BOARD_TOKENS),
+		PLAN_PLAYER_INDICATOR("BTKPlayerPlan", ATLASES.BOARD_TOKENS),
+		PLAYER_BLACK("BTKPlayerBlack", ATLASES.BOARD_TOKENS),
+		PLAYER_GREEN("BTKPlayerGreen", ATLASES.BOARD_TOKENS),
+		PLAYER_RED("BTKPlayerRed", ATLASES.BOARD_TOKENS),
+		PLAYER_YELLOW("BTKPlayerYellow", ATLASES.BOARD_TOKENS),
+		MOVE_2_GUARDS("BTKMove2Guards", ATLASES.BOARD_TOKENS),
+		STAMINA("BTKStamina", ATLASES.BOARD_TOKENS),
+		TOOL("BTKTool", ATLASES.BOARD_TOKENS),
+		MONEY("BTKMoney", ATLASES.BOARD_TOKENS),
+		KNIFE("BTKKnife", ATLASES.BOARD_TOKENS),
+		KEY("BTKKey", ATLASES.BOARD_TOKENS),
+		
+	  //CARDS
+		BLACKMAIL_CARD("CBlackmail", ATLASES.CARDS),
+		CARD_THREE_TASK_ITEMS("CTaskThreeItems", ATLASES.CARDS),
+		CARD_TWO_TASK_ITEMS("CTaskTwoItems", ATLASES.CARDS);
+		
+		public final ATLASES atlas;
+		public final String name;
+		SPRITES(String name, ATLASES atlas){
+			this.name = name;
+			this.atlas = atlas;
+		}
+	};
+		
+	public static enum FONTS{
+		DEBUG("fonts/debug.fnt");
+		
+		public final String patch;
+		FONTS(String patch){
+			this.patch = patch;
+		}
+	}
+	
+	public static TextureAtlas atlases[];
+	public static BFonts fonts[];
+	
+	public static void init(){
+		atlases = new TextureAtlas[ATLASES.values().length];
+		fonts = new BFonts[FONTS.values().length];		
+		sound = new SSound();
+	}
+
+	public static void loadFont(FONTS font, TextureFilter f, boolean fixedWidthForNumbers){
+		if(fonts[font.ordinal()] == null){
+			l.info("    loading "+font);
+			fonts[font.ordinal()] = new BFonts(Gdx.files.internal(font.patch), false);
+			fonts[font.ordinal()].getRegion()
+								 .getTexture()
+								 .setFilter(f,f);
+			if(fixedWidthForNumbers)
+				fonts[font.ordinal()].setFixedWidthGlyphs("0123456789");
+		}
+	}
+	public static void loadFont(FONTS font, TextureFilter f, boolean fixedWidthForNumbers, Callback c){
+		
+	}
+	public static boolean isFontLoaded(FONTS font){
+		return fonts[font.ordinal()] != null;
+	}
+	public static void disposeFont(FONTS font){
+		if(fonts[font.ordinal()] != null){
+			fonts[font.ordinal()].dispose();
+			fonts[font.ordinal()] = null;
+		}
+	}
+	
+	public static void loadAtlas(ATLASES atlas){
+		if(atlases[atlas.ordinal()] == null){
+			l.info("    loading "+atlas);
+			atlases[atlas.ordinal()] = new TextureAtlas(Gdx.files.internal(atlas.patch));
+		}
+	}
+	public static void loadAtlas(ATLASES atlas, Callback c){
+		
+	}
+	public static boolean isAtlasLoaded(ATLASES atlas){
+		return atlases[atlas.ordinal()] != null;
+	}
+	public static void disposeAtlas(ATLASES atlas){
+		if(atlases[atlas.ordinal()] != null){
+			atlases[atlas.ordinal()].dispose();
+			atlases[atlas.ordinal()] = null;
+		}
+	}
+}

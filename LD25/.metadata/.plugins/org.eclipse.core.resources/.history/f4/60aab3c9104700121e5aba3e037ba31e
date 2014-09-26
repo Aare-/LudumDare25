@@ -1,0 +1,5 @@
+package pl.subfty.sub.vision.actors;
+
+public class PointLightAccessor {
+
+}

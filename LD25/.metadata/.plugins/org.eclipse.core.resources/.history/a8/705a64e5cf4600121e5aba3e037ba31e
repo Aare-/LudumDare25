@@ -1,0 +1,30 @@
+package pl.subfty.sub.vision.stage;
+
+import pl.subfty.sub.interfaces.Callback;
+
+import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public class SStage extends Stage{
+	public Callback onButton;
+	
+	public SStage(float width, float height, boolean stretch) {
+		super(width, height, stretch);	
+	}
+	public SStage(float width, float height, boolean stretch, SpriteBatch sbatch) {
+		super(width, height, stretch, sbatch);
+	}
+	
+	public boolean keyDown(int keycode){
+		if(keycode == Input.Keys.BACK || 
+		   (Gdx.app.getType() == ApplicationType.Desktop && keycode == Input.Keys.B)){
+			if(onButton!= null)
+			   onButton.call(Callback.BACK_BUTTON);
+			return true;
+		}
+		return super.keyDown(keycode);
+	}
+	
+}

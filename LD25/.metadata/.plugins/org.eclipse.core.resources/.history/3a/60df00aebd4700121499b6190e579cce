@@ -1,0 +1,38 @@
+package pl.subfty.ld25.game;
+
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.Array;
+
+public class PooOverlord extends Group{
+	
+	private UI ui;
+	private Array<Poo> poos;
+	
+	public PooOverlord(UI ui){
+		poos = new Array<Poo>();
+		this.ui = ui;
+	}
+	
+	public void restart(int level){
+		while(poos.size > 0)
+			poos.pop()
+				.remove();
+		
+	}
+	
+  //GAME ACTION
+	public void makePoo(final float x, final float y){
+		ui.awardPointsForPoo(x, y);
+		
+		Poo poo = new Poo(BadKittyGame.rH);
+		poo.x = x;
+		poo.y = y;
+		this.addActor(poo);
+		poos.add(poo);
+	}
+	
+  //GETTERS
+	public Array<Poo> getActivePoos(){
+		return poos;
+	}
+}

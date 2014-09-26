@@ -1,0 +1,57 @@
+package pl.subfty.ld25;
+
+import pl.subfty.sub.vision.Art.ATLASES;
+import pl.subfty.sub.vision.Art.FONTS;
+import pl.subfty.sub.vision.stage.AScreen;
+
+public class GameOver extends AScreen{
+
+	@Override
+	public void render(float delta) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void call(int type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected ATLASES[] requiredAtlases() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected FONTS[] requiredFonts() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

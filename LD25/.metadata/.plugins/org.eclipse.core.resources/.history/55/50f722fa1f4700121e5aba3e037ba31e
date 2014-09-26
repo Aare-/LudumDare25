@@ -1,0 +1,49 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.ld25.LD25;
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.Array;
+
+public class PooOverlord extends Group{
+	
+	private UI ui;
+	private Array<Poo> poos;
+	
+	public PooOverlord(UI ui){
+		poos = new Array<Poo>();
+		this.ui = ui;
+	}
+	
+	public void restart(int level){
+		while(poos.size > 0)
+			poos.pop()
+				.remove();
+		
+	}
+	
+  //GAME ACTION
+	public void makePoo(final float x, final float y){
+		Poo poo = new Poo(BadKitty.rH);
+		poo.x = x;
+		poo.y = y;
+		this.addActor(poo);
+		poos.add(poo);
+		
+		Tween.call(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				ui.awardPointsForPoo(x, y);
+			}
+		})
+		.start(LD25.tM);
+	}
+	
+  //GETTERS
+	public Array<Poo> getActivePoos(){
+		return poos;
+	}
+}

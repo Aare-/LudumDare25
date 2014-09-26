@@ -1,0 +1,71 @@
+package pl.subfty.ld25;
+
+import com.badlogic.gdx.scenes.scene2d.Group;
+
+import pl.subfty.sub.vision.Art.ATLASES;
+import pl.subfty.sub.vision.Art.FONTS;
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.SpriteActor;
+import pl.subfty.sub.vision.stage.AScreen;
+
+public class GameOver extends AScreen{
+	
+	private SpriteActor message;
+	
+	public GameOver(){
+		message = new SpriteActor();
+		cntnt = new Group();
+		
+		cntnt.addActor(message);
+	}
+	
+	@Override
+	public void render(float delta) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void show() {
+		if(!isScreenLoaded())
+			loadScreen();
+				
+		message.setSprite(SPRITES.GAME_OVER, LD25.STAGE_W);
+	}
+
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void call(int type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private final static ATLASES reqAtlases[] = {ATLASES.LEVEL1, 
+			 									 ATLASES.UNIVERSAL};
+	private final static FONTS reqFonts[] = {FONTS.DEBUG};
+	@Override
+	protected ATLASES[] requiredAtlases() {
+		return reqAtlases;
+	}
+	@Override
+	protected FONTS[] requiredFonts() {
+		return reqFonts;
+	}
+}

@@ -1,0 +1,35 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.ld25.LD25;
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.SpriteActor;
+import aurelienribon.bodyeditor.BodyEditorLoader;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Group;
+
+public class House extends Group{
+	private BodyEditorLoader bLoader;
+	private Body body;
+	
+	private SpriteActor background;
+	
+	public House(World world){
+		background = new SpriteActor();
+		
+		this.addActor(background);
+	}
+	
+	public void restart(int level){
+		switch(level){
+		case 1:
+			bLoader = new BodyEditorLoader(Gdx.files.internal("bodies/level1"));
+			bLoader.attachFixture(body, "background", fd, scale);
+			background.setSprite(SPRITES.LEVEL1BG, LD25.STAGE_W);
+			
+			break;
+		}
+	}
+}

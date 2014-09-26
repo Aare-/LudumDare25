@@ -1,0 +1,22 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.sub.vision.actors.SpriteActor;
+
+import aurelienribon.bodyeditor.BodyEditorLoader;
+
+import com.badlogic.gdx.scenes.scene2d.Group;
+
+public class House extends Group{
+	private BodyEditorLoader bLoader;
+	private SpriteActor background;
+	
+	public House(){
+		background = new SpriteActor();
+		
+		this.addActor(background);
+	}
+	
+	public void restart(int level){
+		
+	}
+}

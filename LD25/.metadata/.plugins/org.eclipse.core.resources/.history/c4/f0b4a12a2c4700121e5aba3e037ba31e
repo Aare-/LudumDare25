@@ -1,0 +1,5 @@
+package pl.subfty.ld25.game;
+
+public class WayPoint {
+
+}

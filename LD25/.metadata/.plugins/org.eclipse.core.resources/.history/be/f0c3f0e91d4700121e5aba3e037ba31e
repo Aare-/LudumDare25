@@ -1,0 +1,126 @@
+package pl.subfty.sub.vision.fonts;
+
+import pl.subfty.sub.vision.Art;
+import pl.subfty.sub.vision.Art.FONTS;
+
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+
+public class TextActor extends Actor{
+	public final static char NUMBERS[] = {'0','1','2','3','4','5','6','7','8','9', ' '};
+	public FONTS font;
+	public boolean type=false,
+				   front = true; //false = text, true = number
+	
+	private float prevCA;
+	public String text="";
+	public char ctext[]=null;
+	public int settedNumber;
+	public float settedNumberF;
+	
+  //ADDITIONAL ACTOR PROPERTIES
+	public float fadeInA=1;
+	public float alpha=1;
+	
+	public TextBounds bounds;
+	public float wrapWidth;
+	public BitmapFont.HAlignment alignment;
+	
+	public TextActor(FONTS font, float wrapWidth){
+		bounds = new TextBounds();
+		this.font = font;
+		alignment = HAlignment.LEFT;
+		this.wrapWidth = wrapWidth;
+	}
+	
+	public void setText(String text){
+		type=false;
+		this.text = text;
+	}
+	public void setNumber(int number, int maxDigit){
+		settedNumber = number;
+		type=true;
+		int nCache;
+		if(ctext == null){
+			nCache = number;
+			while(nCache > 0)
+				nCache /= 10;
+			
+			ctext = new char[maxDigit];
+		}
+		nCache = number;
+		final int length = ctext.length;
+		int digit=0;
+		if(nCache == 0)
+			ctext[length- digit++ -1] = NUMBERS[0];
+		
+		while(nCache > 0 && digit < maxDigit){
+			ctext[length- digit++ -1] = NUMBERS[nCache%10];
+			nCache /= 10;
+		}
+		
+		while(digit < length)
+			ctext[length - digit++ -1] =  NUMBERS[10];
+	}
+	public void setNumberF(float number, int maxDigit){
+		settedNumberF=number;
+		setNumber((int)number, maxDigit);
+	}
+
+	public TextBounds calcBounds(){
+		Art.fonts[font.ordinal()]
+				 .setScale(135.0f/Art.fonts[font.ordinal()]
+						 			 .getLineHeight()*this.scaleX);
+		
+		bounds.set(Art.fonts[font.ordinal()].getBounds(text));
+		return bounds;
+	}
+	
+	public float getScaleToMatchWidth(float n_width){
+		return n_width/(calcBounds().width); 
+	}
+	public float getYPosRelativeTo(TextActor prev, float diff){
+		return prev.y 
+			   - prev.calcBounds().height 
+			   + diff;
+	}
+	
+	@Override
+	public void draw(SpriteBatch batch, float parentAlpha){
+		prevCA = this.color.a;
+		this.color.a *= alpha*parentAlpha;
+		Art.fonts[font.ordinal()]
+				 .setColor(this.color);
+		this.color.a = prevCA;
+		
+		//TODO: dodaj size czcionki
+		Art.fonts[font.ordinal()]
+				.setScale(Art.fonts[font.ordinal()]
+							 .getLineHeight()*scaleX, 
+						  Art.fonts[font.ordinal()].getLineHeight()*scaleY);
+//				 .setScale(135.0f/Art.fonts[font.ordinal()]
+//						 				   .getLineHeight()*this.scaleX,
+//						   135.0f/Art.fonts[font.ordinal()].getLineHeight()*this.scaleY);
+		if(type)
+		  //DRAWING NUMBER
+			bounds.set(Art.fonts[font.ordinal()]
+						  .drawMultiLine(batch, ctext, 
+								  		 this.x, this.y, 
+								  		 wrapWidth, alignment));
+		else
+		  //DRAWING TEXT
+			bounds.set(Art.fonts[font.ordinal()]
+						  .drawMultiLine(batch, text, 
+						   		  		 this.x, this.y, 
+						   		  		 wrapWidth, alignment, fadeInA, true, front));
+	}
+
+	@Override
+	public Actor hit(float x, float y) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

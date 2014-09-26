@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;LD25/src/pl/subfty/ld25/game/WayPoint.java&apos;" deleteContents="false" description="Delete resource &apos;LD25/src/pl/subfty/ld25/game/WayPoint.java&apos;" element1="/LD25/src/pl/subfty/ld25/game/WayPoint.java" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1355683322854"/>
+</session>

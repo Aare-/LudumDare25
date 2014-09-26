@@ -1,0 +1,26 @@
+package pl.submachine.sub;
+
+public class TouchAgregator {
+	public int pointers[] = new int[5],
+			   aPointers=0;
+	
+	public void resetTouchPointers(){
+		aPointers=0;
+	}
+	public void addTouchPointer(int p){
+		if(aPointers < pointers.length)
+			pointers[aPointers++] = p;
+	}
+	public void removeTouchPointer(int p){
+		int i;
+		for(i=0; i<aPointers; i++)
+			if(pointers[i] == p)
+				break;
+		if(i == aPointers)
+			return;
+		while(i+1<aPointers)
+			pointers[i] = pointers[++i];
+		aPointers--;
+	}
+	
+}

@@ -1,0 +1,75 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.ld25.LD25;
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.PointLightAccessor;
+import pl.subfty.sub.vision.actors.SpriteActor;
+import pl.subfty.sub.vision.stage.actors.ActorAccessor;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.equations.Back;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+
+public class Poo extends Group{
+	public static float STINK_RADIUS = 10f;
+	
+	private SpriteActor shit,
+						stinkRadius;
+	private PointLight pl;
+	
+	public Poo(RayHandler rH){
+		shit = new SpriteActor(SPRITES.POO, 3);
+		stinkRadius = new SpriteActor(SPRITES.STINK, STINK_RADIUS);
+		shit.x = -shit.width/2;
+		shit.y = -shit.height/2;
+		
+		stinkRadius.x = -stinkRadius.width/2;
+		stinkRadius.y = -stinkRadius.height/2;
+		stinkRadius.scaleX = stinkRadius.scaleY = 0;
+		stinkRadius.color.a = 0.0f;
+		stinkRadius.originX = 0; 
+		stinkRadius.originY = 0;
+		
+		pl = new PointLight(rH, 200, new Color(0, 1, 0, 0.0f), 10, 
+							0, 0);
+		pl.setSoft(false);
+		
+		this.addActor(stinkRadius);
+		this.addActor(shit);
+		
+		Timeline.createParallel()
+				.push(Tween.to(stinkRadius, ActorAccessor.SCALE_XY, 1.5f)
+						   .ease(Back.OUT)
+						   .target(1,1))
+			   .push(Tween.to(stinkRadius, ActorAccessor.ALPHA, 0.5f)
+						   .ease(Back.OUT)
+						   .target(0.4f))
+				.push(Tween.to(pl, PointLightAccessor.ALPHA, 2)
+						   .ease(Back.OUT)
+						   .target(0.4f))
+						   .start(LD25.tM);
+	}
+	
+	@Override
+	public void draw(SpriteBatch batch, float parentAlpha) {
+		super.draw(batch, parentAlpha);
+		pl.setActive(true);
+		pl.setPosition(this.x, this.y);
+		pl.setSoftnessLenght(3);
+		pl.setSoft(false);
+		
+		stinkRadius.x = -stinkRadius.width/2*stinkRadius.scaleX;
+		stinkRadius.y = -stinkRadius.height/2*stinkRadius.scaleY;
+	}
+
+	@Override
+	public Actor hit(float x, float y) {
+		return null;
+	}
+}

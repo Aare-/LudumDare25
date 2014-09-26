@@ -1,0 +1,5 @@
+package pl.subfty.ld25;
+
+public class GameOver {
+
+}

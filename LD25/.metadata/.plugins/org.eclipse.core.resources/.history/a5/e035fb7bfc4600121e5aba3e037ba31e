@@ -1,0 +1,40 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.SpriteActor;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+
+public class Poo extends Group{
+	private SpriteActor shit;
+	private PointLight pl;
+	
+	public Poo(RayHandler rH){
+		shit = new SpriteActor(SPRITES.POO, 3);
+		shit.x = -shit.width/2;
+		shit.y = -shit.height/2;
+		
+		pl = new PointLight(rH, 300, new Color(0, 1, 0, 0.5f), 7, 
+							0, 0);
+		pl.setSoft(false);
+		pl.setSoftnessLenght(4);
+		this.addActor(shit);
+	}
+	
+	@Override
+	public void draw(SpriteBatch batch, float parentAlpha) {
+		super.draw(batch, parentAlpha);
+		pl.setActive(true);
+		pl.setPosition(this.x, this.y);
+	}
+
+	@Override
+	public Actor hit(float x, float y) {
+		return null;
+	}
+}

@@ -1,0 +1,19 @@
+package pl.subfty.sub.vision.actors;
+
+import box2dLight.PointLight;
+import aurelienribon.tweenengine.TweenAccessor;
+
+public class PointLightAccessor implements TweenAccessor<PointLight>{
+
+	@Override
+	public int getValues(PointLight target, int tweenType, float[] returnValues) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setValues(PointLight target, int tweenType, float[] newValues) {
+		// TODO Auto-generated method stub
+		
+	}
+}

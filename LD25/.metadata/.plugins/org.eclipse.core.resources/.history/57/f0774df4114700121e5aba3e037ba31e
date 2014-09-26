@@ -1,0 +1,93 @@
+package pl.subfty.sub.vision.actors;
+
+import pl.subfty.ld25.LD25;
+import pl.subfty.sub.vision.Art;
+import pl.subfty.sub.vision.Art.SPRITES;
+
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Logger;
+
+public class SpriteActor extends Actor{
+	Logger l = new Logger("SpriteActor", Logger.DEBUG);
+	
+	private Sprite sprite;
+	
+	public boolean expiliteDisableBlending=false;
+	public float alpha;
+	
+	public SpriteActor(){
+		sprite = new Sprite();
+		alpha = 1;
+		width = 0;
+		height = 0;
+	}
+	public SpriteActor(SPRITES sprite, float width){
+		this();
+		setSprite(sprite, width);
+	}
+	public SpriteActor(SPRITES sprite, float width, float height){
+		this();
+		setSprite(sprite, width, height);
+	}
+	
+	public void setSprite(SPRITES sprite, float width){
+		TextureRegion r = Art.atlases[sprite.atlas.ordinal()]
+				 			 .findRegion(sprite.name);
+		this.sprite.setRegion(r);
+		this.width = width; 
+		this.height = ((float)r.getRegionHeight())/((float)r.getRegionWidth())* this.width;
+	}
+	public void setSprite(SPRITES sprite, float width, float height){
+		TextureRegion r = Art.atlases[sprite.atlas.ordinal()]
+	 			 			 .findRegion(sprite.name);
+		this.sprite.setRegion(r);
+		this.width = width;
+		this.height = height;
+	}
+
+	public void setOriginInCenter(){
+	
+	}
+	
+	@Override
+	public void draw(SpriteBatch sbatch, float parentAlpha){
+		if(sprite == null || sprite.getTexture() == null)
+			return;
+		
+	  //LOGIC
+		//TODO: move this to setters
+		
+		sprite.setScale(this.scaleX, 
+						this.scaleY);
+		sprite.setPosition(this.x, 
+						   this.y);
+		sprite.setColor(this.color);
+		sprite.setOrigin(this.originX, 
+						 this.originY);
+		sprite.setRotation(this.rotation);
+		//TODO: move to setters, set using "game size"
+		sprite.setSize(this.width,
+					   this.height);
+		
+	  //DRAW
+		if(expiliteDisableBlending)
+		    sbatch.disableBlending();
+		sprite.draw(sbatch, parentAlpha*alpha);
+		if(expiliteDisableBlending)
+			sbatch.enableBlending();
+	}
+	
+	public void fillScreen(){
+		this.x = this.y = 0;
+		this.width = LD25.SCREEN_WIDTH;
+		this.height = LD25.SCREEN_HEIGHT;
+	}
+	@Override
+	public Actor hit(float x, float y) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

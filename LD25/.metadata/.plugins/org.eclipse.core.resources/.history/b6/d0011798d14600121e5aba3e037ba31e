@@ -1,0 +1,192 @@
+package pl.subfty.sub.vision.actors;
+
+import pl.subfty.sub.vision.actors.meshbatch.MeshBatch;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+
+public class ClockShape extends Actor{
+	public float radius,
+				 vertices[]=null,
+				 time,
+				 borderMixColorA;
+	protected float oldRadius=-1;
+	public Color c,
+				 internalC;
+	public boolean rays=false;
+	protected int precission;
+	
+	protected Mesh mesh;
+	
+	protected static AtlasRegion sprites[];
+	
+	public boolean useTexture=true,
+				   useGradient=false;
+	
+	public int verticleSpan[] = null;
+	MeshBatch mbatch;
+	private float arr[];
+	private int arr_pos;
+	private AtlasRegion reg;
+	
+	public ClockShape(float x, float y,
+					  float radius, float time,
+					  int precission, Color c){
+		basic_init(x,y,radius,time,c,precission);
+		
+		vertices = new float[(precission+3)*5];
+		mesh = new Mesh(false, precission+3, precission+3,
+						new VertexAttribute(Usage.Position, 2, ShaderProgram.POSITION_ATTRIBUTE),
+						new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE),
+						new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
+		
+		short indices[] = new short[precission+3];
+		for(int i=0; i<precission+3; i++)
+			indices[i] = (short)i;
+		mesh.setIndices(indices);
+	}
+	public ClockShape(MeshBatch batch,
+					   float x, float y,
+					   float radius, float time,
+					   int precission, Color c){
+		basic_init(x,y,radius,time,c,precission);
+		
+		verticleSpan = batch.addToBatch((precission+3));
+		this.mbatch = batch;
+	}
+	private void basic_init(float x, float y, float radius, float time, Color c, int precission){
+		this.x = x;
+		this.y = y;
+		this.radius = radius;
+		setTime(time);
+		this.c = new Color();
+		internalC = this.c;
+		this.c.set(c);
+		borderMixColorA=0;
+		this.precission = precission;
+		
+	  //LOADING SPRITES
+//		if(reg== null)
+//			reg = GYRO.art.atlas.findRegion("gme", 23);
+	}
+	
+	@Override
+	public void draw(SpriteBatch sbatch, float parentAlpha){
+	  //UPDATING VERTICES
+//		if(verticleSpan != null){
+//			arr_pos = verticleSpan[0]*5; 
+//			arr = mbatch.vertices;
+//		}else{
+//			arr_pos=0;
+//			arr = vertices;
+//		}
+//		arr[arr_pos+0] = x;
+//		arr[arr_pos+1] = y;
+//		
+//		float newColor =  Color.toFloatBits(c.r*(1-borderMixColorA) + GYRO.classic.bgColor.r*borderMixColorA, 
+//											c.g*(1-borderMixColorA) + GYRO.classic.bgColor.g*borderMixColorA, 
+//											c.b*(1-borderMixColorA) + GYRO.classic.bgColor.b*borderMixColorA, 
+//											c.a*alpha*parentAlpha);
+//	  //WYWALENIE GRADIENTOW
+//		if(useGradient)
+//			Color.toFloatBits(internalC.r, 
+//							  internalC.g, 
+//							  internalC.b,
+//							  internalC.a*alpha*parentAlpha);
+//		else
+//			arr[arr_pos+2] = newColor;
+//	  //UPDATING ADDITIONAL VERTICLES
+//		arr[arr_pos+5]=x+GYRO.nat.sin(rotation)*radius;
+//		arr[arr_pos+5+1]=y+GYRO.nat.cos(rotation)*radius;
+//		arr[arr_pos+5+2] = newColor;	
+//		
+//		arr[arr_pos+(precission+2)*5]=x+GYRO.nat.sin((2*Native.PI*time)+rotation)*radius;
+//		arr[arr_pos+(precission+2)*5+1]=y+GYRO.nat.cos((2*Native.PI*time)+rotation)*radius;
+//		arr[arr_pos+(precission+2)*5+2] = newColor;	
+//		
+//		final int size = precission+2;
+//		for(int i=2; i<size; i++){
+//			float p =  2*Native.PI*(((i-2)/((float)precission-1)*time));
+//			if(rays){
+//				if(i %3 == 1){
+//					arr[arr_pos+i*5]=x;
+//					arr[arr_pos+i*5+1]=y;
+//				}else{
+//					arr[arr_pos+i*5]=x+GYRO.nat.sin(p+rotation)*radius;
+//					arr[arr_pos+i*5+1]=y+GYRO.nat.cos(p+rotation)*radius;
+//				}
+//			}else{
+//				arr[arr_pos+i*5]=x+GYRO.nat.sin(p+rotation)*radius;
+//				arr[arr_pos+i*5+1]=y+GYRO.nat.cos(p+rotation)*radius;
+//			}
+//
+//			arr[arr_pos+i*5+2] =newColor;	
+//		}
+//		
+//	  //RELOADING TEXTURE COORDINATES IN CASE THE RADIUS CHANGED
+//		if(oldRadius != radius){
+//			oldRadius = radius;
+//			
+//			arr[arr_pos+3] = reg.getU();
+//			arr[arr_pos+4] = (reg.getV2()-reg.getV())*(Math.min(radius/GYRO.SCALE*10f,1000.0f)/1000.0f)+reg.getV();//reg.getV2()-0.7f;
+//			
+//			//l.info("v2: "+reg.getV2()+"v1: "+reg.getV()+" "+(radius/GYRO.SCALE*10f));
+//			for(int i=1; i<=size; i++){
+//				arr[arr_pos+i*5+3] = (i%2==0)?reg.getU2() : reg.getU();
+//				arr[arr_pos+i*5+4] = reg.getV();
+//			}
+//		}
+//		
+//		if(rays){
+//			if(verticleSpan == null){
+//				sbatch.flush();
+//				Gdx.gl.glEnable(GL10.GL_SCISSOR_TEST);
+//				
+//				int scy= (int)Math.round(361/GYRO.SCALE);
+//				GYRO.mSelect.challenges.calculateScissors(GYRO.stage.getCamera(), sbatch.getTransformMatrix());
+//				Gdx.gl.glScissor((int)GYRO.mSelect.challenges.scissors.x+1, 
+//								 (int)GYRO.mSelect.challenges.scissors.y+scy,//+1+145, 
+//								 (int)GYRO.mSelect.challenges.scissors.width, 
+//								 (int)GYRO.mSelect.challenges.scissors.height);
+//				
+//				mesh.setVertices(vertices);	
+//				Gdx.gl.glEnable(GL10.GL_BLEND);
+//				if(useTexture)
+//					Gdx.graphics.getGL10().glEnable(GL10.GL_TEXTURE_2D);	
+//				mesh.render(GL10.GL_TRIANGLE_FAN);
+//				
+//				Gdx.gl.glDisable(GL10.GL_SCISSOR_TEST);
+//			}
+//		}else
+//			if(verticleSpan == null){
+//				mesh.setVertices(vertices);	
+//				Gdx.gl.glEnable(GL10.GL_BLEND);
+//				if(useTexture)
+//					Gdx.graphics.getGL10().glEnable(GL10.GL_TEXTURE_2D);	
+//				mesh.render(GL10.GL_TRIANGLE_FAN);
+//			}
+		
+	}
+
+	public void setTime(float time){
+		this.time = Math.max(0, time);
+		if(this.time > 1)
+			this.time %= 1;
+	}
+
+  //UTILS
+	public static int getPrecision(int len, float radiuss){
+		return Math.min(120,Math.max(20, (int)(Native.PI*2/(2*Math.asin(len/(radiuss/Alc.SCALE))))));
+	}
+	@Override
+	public Actor hit(float x, float y) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

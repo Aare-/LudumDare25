@@ -1,0 +1,117 @@
+package pl.submachine.sub;
+
+/**
+ * Holds the different translations
+ * The languages are, accordingly:
+ * 
+ * 0 - English
+ * 1 - Polish
+ * 
+ * @author Filip
+ *
+ */
+public enum Lang{
+	GAME_TITLE("ALCATRAZ the scapegoat",
+			   "ALCATRAZ koziol ofiarny"),
+	
+  //ESCAPE CARDS TITLE
+	DIG_TUNNEL("Dig a tunnel","Wykop tunel"),
+	LIQ_NAZI_GANG("Liquidate a nazi gang leader", ""),
+	SWITCH_FF_ALARM("Switch off the alarm",""),
+	OPEN_THE_MANHOLE("Open the manhole",""),
+	SILENCE_THE_RAT("Silence the rat",""),
+	WIN_RESPECT("Win Respect at the cellblock",""),
+	PREPARED_CLOTHES("Prepared clothes",""),
+	PUT_DOWN_TRACKING_DOGS("Put down the tracking dogs",""),
+	BRIBE_THE_GUARD("Bribe the guard", ""),
+	START_A_FIRE("Start a fire"),
+	BREAK_THROUGH_A_WALL("Break through a wall"),
+	GAIN_FAVOR_W_GANG("Gain favor with the gang"),
+	BREAK_THE_BARS_WINDOWS("Break the bars in the window"),
+	STEAL_MAP("Steal the prison map"),
+	SWITCH_OFF_POWER("Swicth off the power"),
+	POISON_WARDEN("Poison the warden"),
+	MAKE_DUPLICATE_KEY("Make a duplicate key"),
+	IMPERSONATE_GUARD("Impersonate a guard"),
+	LIQUIDATE_GUARD("Liquidate a guard"),
+	DAMAGE_CAMERAS("Damage security cameras"),
+	FAKE_EPIDEMIC("Fake an epidemic"),
+	FRAME_RAT_DRUGS("Frame a rat for drugs"),
+	START_RIOTS("Start riots"),
+	COVER_TRACKS("Cover up the tracks"),
+	CHECK_PATROLS("Check the patrols' ROUTES"),
+	TAKE_HOSTAGE("Take a hostage"),
+	INTIMIDATE_WITNESS("Intimidate a witness"),
+	SET_OF_KEYS("Set of keys"),
+	HIDDEN_FIS("Hidden fix"),
+	PUT_GUARDS_TO_SLEEP("Put guards to sleep"),
+	
+  //SCAPEGOAT CARDS
+	ESCORT_T("ESCORT"),
+	ESCORT_DESC("Move a choosen player to a choosen location."),
+	
+	LOCKDOWN_T("LOCKDOWN"),
+	LOCKDOWN_DESC("Choose a location. It cannot be entered until the end of round."),
+	
+	CHANGE_OF_PLANS_T("CHANGE_OF_PLANS"), 
+	CHANGE_OF_PLANS_DESC("Move a chosen task to any location with no task."),
+	
+	FALSE_ALARM_T("FALSE ALARM"),
+	FALSE_ALARM_DESC("Until the end of the round all locations have one guard more."),
+	
+	ERRAND_BOY_T("ERRAND BOY"),
+	ERRAND_BOY_DESC("Use the ability of a chosen location, no matter how many guards there are."),
+	
+	PATROL_T("PATROL"),
+	PATROL_DESC("Move 3 guards from chosen locations to any other locations."),
+	
+	ISOLATION_CELL_T("ISOLATION CELL"),
+	ISOLATION_CELL_DESC("A choosen player does not act in theri round"),
+	
+	BULLYING_T("BULLYING"),
+	BULLYING_DESC("Take stuff?? from a chosen player."),
+	
+	BAD_PLAN_T("BAD PLAN"),
+	BAD_PLAN_DESC("Remove a chosen task from the game. Immediately draw a new task and place it in a randomly chosen location with no task"),
+	
+	BODY_SEARCH_T("BODY SEARCH"),
+	BODY_SEACH_DESC("Each player apart from you loses stuff??"),
+	
+	ASSEMBLY_T("ASSEMBLY"),
+	ASSEMBLY_DESC("Each player apart from you loses one action and all stuff???"),
+	
+  //PLAYER ACTION EXCEPTIONS
+	NOT_ENOUGH_MONEY("Not enough money to bribe guard"),
+	NO_GUARD_TO_BRIBE("No guard to bribe"),
+	NOT_ENOUGH_AP("Not enough action points to perform this action"),
+	NO_STAMINA_TO_USE("You don't have any stamina left to use"),
+	NO_SCAPEGOAT_NO_BLACKMAIL("You need to be scapegoat to play blackmail card"),
+	NO_BLACKMAIL_CARD_IN_INVENTORY("You dont need to have blackmail card in inventory to play them"),
+	INVALID_MOVE("Invalid move"),
+	INVALID_TILE("Invalid tile"),
+	NO_GUARDS_ON_THIS_TILE("There are no guards on this tile"),
+	TO_MANY_GUARDS("There are to many guards on this tile to add next"),
+	NO_PLAYER_TO_TRADE("There are no other player on this tile to trade with"),
+	NO_PLAYER_TO_STEAL("There are no other player on this tile to steal from"),
+	NO_TASKS_ON_THIS_TILE("There are no task to complete on this tile"),
+	NO_TILE_ASSOC_WITH_TASK("There are no tile associated with this task card"),
+	TO_MANY_GUARDS_TO_ACCOMPLISH_PLAN("There are to many guards to accomplish part of plan"),
+	NOT_ENOUGH_PRISONERS_TO_ACCOMP_PLAN("There are not enough prisoners to accomplish this plan"),
+	NOT_ENOUGH_MARKERS("Players does not have enough markers to accomplish plan"),
+	NO_ITEMS_LEFT_ON_TILE("You cannot get water out of a stone."),
+	YOU_DONT_HAVE_FREE_SPACE("You dont have free space to add this item"),
+	TO_MANY_GUARDS_TO_PERFORM_ACTION("There are to many guards on this tile to perform this action");
+	
+	
+	public static int L=0;
+	private String langs[];
+	
+	Lang(String... arguments){
+		langs = arguments;
+	}
+	
+	public String str(){
+		return langs[L];
+	}
+};
+

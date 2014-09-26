@@ -1,0 +1,54 @@
+
+level11.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+level1fg
+  rotate: false
+  xy: 2, 2
+  size: 1024, 1010
+  orig: 1024, 1010
+  offset: 0, 0
+  index: -1
+level1bg
+  rotate: false
+  xy: 2, 1014
+  size: 1024, 1010
+  orig: 1024, 1010
+  offset: 0, 0
+  index: -1
+human1
+  rotate: false
+  xy: 1028, 2
+  size: 84, 72
+  orig: 84, 72
+  offset: 0, 0
+  index: -1
+human4
+  rotate: false
+  xy: 1114, 2
+  size: 72, 67
+  orig: 72, 67
+  offset: 0, 0
+  index: -1
+human3
+  rotate: false
+  xy: 1188, 2
+  size: 70, 62
+  orig: 70, 62
+  offset: 0, 0
+  index: -1
+human2
+  rotate: false
+  xy: 1260, 2
+  size: 72, 61
+  orig: 72, 61
+  offset: 0, 0
+  index: -1
+human
+  rotate: false
+  xy: 1334, 2
+  size: 47, 48
+  orig: 47, 48
+  offset: 0, 0
+  index: -1

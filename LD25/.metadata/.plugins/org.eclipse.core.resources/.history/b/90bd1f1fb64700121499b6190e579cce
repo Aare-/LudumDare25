@@ -1,0 +1,257 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.ld25.LD25;
+import pl.subfty.ld25.game.BadKittyGame.LEVEL_DEF;
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.SpriteActor;
+import pl.subfty.sub.vision.stage.actors.ActorAccessor;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.equations.Quint;
+import aurelienribon.tweenengine.equations.Sine;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Logger;
+import com.badlogic.gdx.utils.Pool;
+
+public class Kitty extends Group{
+	private Logger l = new Logger("Kitty", Logger.DEBUG);
+	private static float RADIUS = 0.85f;
+	
+	private SpriteActor bgImg;
+	private PooOverlord poo;
+	private Group kittyLoveG;
+	
+	private Vector2 veloc = new Vector2();
+	private static float SPEED = 35,
+						 POO_METER_MAX = 2.5f,
+						 POO_COMMITING_TIME = 1,
+						 MAX_WOOBLE_AMP = 15;
+	
+	private float pooMeter,
+				  maxPooW8;
+	
+  //WOOBLING
+	private Vector2 wobbleDirection = new Vector2();
+	private float wooblePhase,
+				  addWX,
+				  addWY;
+	private boolean pooCommited;
+	
+  //LOVING
+	private class LovePool extends Pool<SpriteActor>{
+
+		@Override
+		protected SpriteActor newObject() {
+			SpriteActor s = new SpriteActor(SPRITES.LOVE, 0.475f);
+			kittyLoveG.addActor(s);
+			return s;
+		}
+		
+		public void obtainAndLaunch(float x, float y){
+			SpriteActor s = this.obtain();
+			LD25.tM.killTarget(s);
+			s.alpha = 1;
+			s.scaleX = s.scaleY=0;
+			s.x = x;
+			s.y = y;
+			
+			Timeline.createParallel()
+					 .push(Tween.to(s, ActorAccessor.POS_X, 0.4f)
+							 	.targetRelative(0.5f*(LD25.rand.nextBoolean() ? 1 : -1))
+							 	.ease(Sine.INOUT)
+							 	.repeatYoyo(4, 0))
+					.push(Tween.to(s, ActorAccessor.POS_Y, 8f)
+							   .ease(Quint.OUT)
+							   .targetRelative(3))
+					.push(Tween.to(s, ActorAccessor.ALPHA, 0.2f)
+							   .target(1))
+					.push(Tween.to(s, ActorAccessor.ALPHA, 0.5f)
+							   .target(0)
+							   .delay(1.2f))
+					.push(Tween.to(s, ActorAccessor.SCALE_XY, 0.4f)
+							   .target(1,1))
+					.start(LD25.tM);					 
+		}
+	}
+	private LovePool love;
+	private float loveCharger;
+		
+  //BOX2D STUFF
+	private World world;
+	public Body body;
+	
+	public Kitty(World world, PooOverlord poo, Group kittyLoveGroup){
+		this.world = world;
+		this.poo = poo;
+		this.kittyLoveG = kittyLoveGroup;
+		
+		bgImg = new SpriteActor();
+		love = new LovePool();
+		
+	  //CREATING BODY
+		BodyDef d = new BodyDef();
+		d.type = BodyType.DynamicBody;
+		d.linearDamping = 2.5f;
+		
+		CircleShape shape = new CircleShape();
+		shape.setRadius(RADIUS*0.7f);
+		shape.setPosition(new Vector2(0,0));
+		
+		body = this.world.createBody(d);
+		body.createFixture(shape, 1f);
+		body.setUserData(this);
+		
+		this.addActor(bgImg);
+	}
+	
+	public void restart(LEVEL_DEF level){
+		bgImg.setSprite(SPRITES.CAT,RADIUS*2*1.2f);
+		this.width = bgImg.width;
+		this.height = bgImg.height;
+		this.pooMeter = 0;
+		this.wooblePhase=0;
+		this.addWX = 0;
+		this.addWY = 0;
+		this.wobbleDirection.set(1, 0);
+		pooCommited=false;
+		maxPooW8=0;
+		loveCharger = 0;
+		love.clear();
+		
+		float SC = 0.025f;
+		
+		body.setTransform(this.x = (614)*SC, 
+						  this.y = (1024-285)*SC, 0); 	
+	}
+	
+  //ACTIONS
+	private void moveLeft(){
+		veloc.x -= SPEED; 
+	}
+	private void moveRight(){
+		veloc.x += SPEED;
+	}
+	private void moveUp(){
+		veloc.y += SPEED;
+	}
+	private void moveDown(){
+		veloc.y -= SPEED;
+	}
+	public void makeLove(float x, float y){
+		if(loveCharger <= 0){
+			love.obtainAndLaunch(x, y);
+			loveCharger = 0.15f;
+		}
+	}
+	
+	private void makePoo(float delta){
+	  //THERE IS NO GOING BACK WHEN STARTED TO MAKE POO
+		if(pooMeter == POO_METER_MAX){
+			maxPooW8 += delta;
+			
+			calcWooble(delta);
+			
+			if(maxPooW8 > POO_COMMITING_TIME){
+				poo.makePoo(this.x+this.width/2, this.y+this.width/2);
+				pooCommited = true;
+				pooMeter=0;
+				maxPooW8=0;
+				addWX = addWY = 0;
+				
+				
+			}
+			
+			calcWoobleMovement(delta);
+			return;
+		}else
+			maxPooW8=0;
+		
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+			if(pooCommited)
+				return;
+			pooMeter += delta;
+		}else{
+			pooMeter -= delta * 2;
+			pooCommited = false;
+		}
+		
+		pooMeter = Math.min(Math.max(pooMeter, 0), POO_METER_MAX);
+		
+		if(pooMeter > 0)
+			calcWooble(delta);			
+		else{
+			this.wooblePhase=0;
+			this.wobbleDirection.set(1, 0);
+			this.wobbleDirection.rotate(360.0f * LD25.rand.nextFloat());
+		}
+		
+		calcWoobleMovement(delta);
+	}
+	private void calcWooble(float delta){
+		veloc.set(0, 0);
+		
+		MAX_WOOBLE_AMP = 0.3f;
+		
+		this.wooblePhase += (30f*(pooMeter/POO_METER_MAX)+40) * delta;
+		if(this.wooblePhase > 1){
+			this.wooblePhase = 0;
+			this.wobbleDirection.rotate((this.wobbleDirection.angle() + 90 + 180.0f * LD25.rand.nextFloat())%360);
+		}
+	}
+	private void calcWoobleMovement(float delta){
+		addWX += ((wobbleDirection.x*(pooMeter/POO_METER_MAX))*MAX_WOOBLE_AMP-addWX)*(20f+15f*(Math.min(1,(pooMeter+POO_METER_MAX*0.5f)/POO_METER_MAX)))*delta;
+		addWY += ((wobbleDirection.y*(pooMeter/POO_METER_MAX))*MAX_WOOBLE_AMP-addWY)*(20f+15f*(Math.min(1,(pooMeter+POO_METER_MAX*0.5f)/POO_METER_MAX)))*delta;
+	}
+	
+  //GETTERS
+	public float getPooMeterFillPercent(){
+		return pooMeter/POO_METER_MAX;
+	}
+	public boolean isPooInRange(){
+		Array<Poo> poos = poo.getActivePoos();
+		for(int i=0; i<poos.size; i++)
+			if(Math.sqrt(Math.pow(poos.get(i).x-this.x,2) + Math.pow(poos.get(i).y - this.y, 2)) < Poo.STINK_DIAMETER/2+RADIUS){
+				return true;
+			}
+		
+		return false;
+	}
+	
+	@Override
+	public void act(float delta){
+		super.act(delta);
+		
+	  //CHARGING LOVE
+		if(loveCharger > 0)
+			loveCharger -= delta;
+		
+	  //MOVING PLAYER
+		veloc.set(0,0);
+		if(Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))
+			moveUp();
+		if(Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))
+			moveDown();
+		if(Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))
+			moveLeft();
+		if(Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+			moveRight();
+		
+		makePoo(delta);
+		
+		body.applyForceToCenter(veloc);
+		
+		this.x = body.getPosition().x-this.width/2 + addWX;
+		this.y = body.getPosition().y-this.height/2 + addWY;
+		
+	}
+}

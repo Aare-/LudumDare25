@@ -1,0 +1,33 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.SpriteActor;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+
+public class Poo extends Group{
+	private SpriteActor shit;
+	
+	
+	public Poo(){
+		
+		
+		shit = new SpriteActor(SPRITES.POO, 3);
+		shit.x = -shit.width/2;
+		shit.y = -shit.height/2;
+		
+		this.addActor(shit);
+	}
+	
+	@Override
+	public void draw(SpriteBatch batch, float parentAlpha) {
+		super.draw(batch, parentAlpha);
+	}
+
+	@Override
+	public Actor hit(float x, float y) {
+		return null;
+	}
+}

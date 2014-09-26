@@ -1,0 +1,132 @@
+package pl.subfty.sub.interfaces;
+
+import pl.subfty.sub.vision.actors.SEIndicator;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+
+public class Scrollable extends Group{
+	public float interspace=0;
+	
+	protected int selected=0;
+	protected float scrolled=0,
+				    selectedX=0;
+	public static boolean SCROLLING_BLOCK=false;
+	public boolean moving=false;
+	
+	public SEIndicator indicator;
+	
+  //SCROLLING
+	private Vector2 prev = new Vector2();
+	private float xDelta[] = new float[1],
+				  veloc,
+				  target,
+				  scrollSensitivity;
+	private int filled=0,
+				pos=0;
+	private long time;
+	private boolean jTouched=true,
+					lr=false;
+	
+	public Scrollable(float scrollSensitivity, SEIndicator indicator){
+		this.scrollSensitivity = scrollSensitivity;
+		this.indicator = indicator;
+	}
+
+	public void setSelected(int what){
+		setS(what);
+		
+		scrolled=0;
+		
+		List<Actor> childrens = this.children;
+		for(int i=0; i<what; i++)
+			scrolled -= childrens.get(i).getWidth()+interspace;
+		target = selectedX = scrolled;
+	}
+	protected int setS(int s){
+		return selected = s;
+	}
+	
+	private float sum;
+	public void draw(SpriteBatch batch, float parentAlpha){
+//	  //LOGIC YO!
+//		sum=0;
+//		SnapshotArray<Actor> childrens = this.getChildren();
+//		
+//		for(int i=0; i<childrens.size; i++){
+//			childrens.get(i).setPosition(scrolled+this.getWidth()/2-childrens.get(i).getWidth()/2+sum,
+//										 this.getHeight()-childrens.get(i).getHeight())/2);
+//			sum += childrens.get(i).getWidth()+interspace;
+//		}
+//		
+//		if(indicator != null)
+//			indicator.setSelected(selected);
+//		
+//		GYRO.toStageCoordinates(Gdx.input.getX(), Gdx.input.getY(), GYRO.tmp);
+//		if(!GYRO.BLOCK_INPUT || SCROLLING_BLOCK){
+//			if(Gdx.input.isTouched() &&
+//			   (GYRO.tmp.y >= this.y && GYRO.tmp.y <= this.y+this.height)){
+//				if(!jTouched){
+//					xDelta[(pos++)%xDelta.length] = (prev.x - GYRO.tmp.x)/((System.currentTimeMillis()-time));
+//					filled++;
+//					
+//					if(filled>xDelta.length){
+//						final int size2 = xDelta.length;
+//						veloc=0;
+//						for(int i=0; i<size2; i++)
+//							veloc += xDelta[i];
+//						veloc /= size2;
+//						
+//						scrolled -= veloc*GYRO.delta*1000;
+//					}
+//				}
+//				
+//				prev.set(GYRO.tmp);
+//				time = System.currentTimeMillis();
+//				jTouched=false;
+//				moving=true;
+//			}else{
+//				filled = 0;
+//				if(!jTouched){
+//				  //JUST RELEADES, FIND TARGET TO FALL BACK TO
+//					if(Math.abs(scrolled-selectedX)>scrollSensitivity){
+//						if(scrolled-selectedX > 0){
+//							if(selected>0)
+//								target = selectedX += children.get(setS(selected-1)+1).width+interspace;
+//						}else{
+//							if(selected < children.size()-1)
+//								target = selectedX -= children.get(setS(selected+1)-1).width+interspace;
+//						}
+//							
+//					}
+//				}
+//				jTouched=true;
+//				
+//				if(Math.abs(target-scrolled)>10){
+//					veloc = Math.max(Math.min((Math.abs((scrolled-target)/100.0f)), 7), 0.01f);
+//					veloc *= (scrolled-target < 0)?-1:1;
+//					
+//					if(scrolled<target)
+//						lr=false;
+//					else
+//						lr = true;
+//					scrolled -= veloc*GYRO.delta*1000;
+//					if(scrolled>=target && !lr)
+//						scrolled=target;
+//					if(scrolled<=target && lr)
+//						scrolled=target;
+//					moving=true;
+//				}else{
+//					scrolled=target;
+//					moving=false;
+//				}
+//			}
+//		}
+		
+	  //DRAWING
+		super.draw(batch, parentAlpha);
+	}
+}

@@ -1,0 +1,289 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.ld25.GameOver;
+import pl.subfty.ld25.LD25;
+import pl.subfty.sub.vision.Art.ATLASES;
+import pl.subfty.sub.vision.Art.FONTS;
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.SpriteActor;
+import pl.subfty.sub.vision.stage.AScreen;
+import pl.subfty.sub.vision.stage.actors.ActorAccessor;
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import box2dLight.RayHandler;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Logger;
+
+public class BadKittyGame extends AScreen
+					  implements ContactListener{
+	private static float SC = 0.025f;
+	
+	public enum LEVEL_DEF{
+		LEVEL_1(4, new float[][]{
+				{(876)*SC, (1024-320)*SC},
+				{(111111)*SC, (1024-628)*SC},
+				{(111111)*SC, (1024-253)*SC},
+				{(111111)*SC, (1024-875)*SC},
+		});
+		
+		public final int numberOfHumans;
+		public final float initPlayerPos[][];
+		
+		LEVEL_DEF(int numberOfHumans, float initPlayerPos[][]){
+			this.numberOfHumans = numberOfHumans;
+			this.initPlayerPos = initPlayerPos;
+		}
+	};
+	
+  //BOX2D
+	World world;
+	public final float dt = 1.0f / 60.0f;
+	public final int tMrrdtInt = (int)(dt*1000);
+	private float accum,
+		  		  taccum;
+	public static float alpha;
+	
+	public static RayHandler rH;
+	
+  //GAME ACTORS
+	private UI ui;
+	private House house;
+	private SpriteActor houseFront,
+						darkness;
+	private Kitty kitty;
+	private PooOverlord pooO;
+	private RayRendererActor rRend;
+	
+	private Group kittyLoveG,
+				  waypointsG,
+				  homies,
+				  movable;
+	private Array<Human> humans;
+	private boolean startedDeathAnim = false;
+	
+	public LEVEL_DEF actLevel;
+	
+	public BadKittyGame(){
+		movable = new Group();
+		cntnt = new Group();
+		waypointsG = new Group();
+		kittyLoveG = new Group();
+		
+		world = new World(new Vector2(0,0), false);
+		world.setContactListener(this);
+
+		rH = new RayHandler(world);
+		rH.setBlur(false);
+		rH.setShadows(false);
+		
+		house = new House(world);
+		houseFront = new SpriteActor();
+		darkness = new SpriteActor();
+		
+		ui = new UI();
+		pooO = new PooOverlord(ui);
+		ui.connectToPooOverlord(pooO);
+		kitty = new Kitty(world, pooO, kittyLoveG);
+		homies = new Group();
+		humans = new Array<Human>();
+		rRend = new RayRendererActor();
+
+		movable.addActor(house);
+		movable.addActor(rRend);
+		movable.addActor(waypointsG);
+		movable.addActor(pooO);
+		movable.addActor(kitty);
+		movable.addActor(homies);
+		movable.addActor(houseFront);
+		movable.addActor(kittyLoveG);
+		cntnt.addActor(movable);
+		cntnt.addActor(ui);
+		cntnt.addActor(darkness);
+	}
+	
+	private void restart(LEVEL_DEF level){
+		kitty.restart(level);
+		
+		while(humans.size < level.numberOfHumans)
+			humans.add(new Human(world, kitty));
+		while(humans.size > level.numberOfHumans)
+			humans.pop();
+		
+		homies.clear();
+		for(int i=0; i<humans.size; i++){
+			humans.get(i).restart(level, i);
+			homies.addActor(humans.get(i));
+		}
+		
+		pooO.restart(level);
+		house.restart(level);
+		houseFront.setSprite(SPRITES.LEVEL1FG, 26.31f);
+		ui.restart(level);
+		startedDeathAnim=false;
+		
+		switch(level){
+		case LEVEL_1:
+			
+			break;
+		}
+	}
+	
+	@Override
+	public void render(float delta) {
+		
+	  //BOX2D WORLD TICK
+    	accum +=  Math.min(delta,0.25f);
+		
+        while (accum >= dt) {
+        	world.step(delta, 4, 5);	
+        	accum -= dt;
+        }
+        BadKittyGame.alpha = accum / dt;
+        
+        taccum += (delta*1000.0f);
+        if(taccum >= tMrrdtInt)
+        	taccum = taccum% tMrrdtInt;
+        
+        houseFront.x = 0;
+        house.y = -0.2f;
+      //CAMERA MOVEMENT
+        float margin_w = 15.0f,
+        	  margin_h = 15.0f,
+        	  speed = 3.0f;
+        
+        movable.scaleX =2;
+        movable.scaleY = 2;
+        
+        if(this.movable.x +kitty.x*movable.scaleX < margin_w)
+        	this.movable.x += (margin_w-(this.movable.x +kitty.x*movable.scaleX))*speed*delta;
+        if(this.movable.x + kitty.x*movable.scaleX > (LD25.STAGE_W-margin_w))
+        	this.movable.x -= ((this.movable.x +kitty.x*movable.scaleX)-(LD25.STAGE_W-margin_w))*speed*delta;
+        if(this.movable.y +kitty.y*movable.scaleY < margin_h)
+        	this.movable.y += (margin_h-(this.movable.y +kitty.y*movable.scaleY))*speed*delta;
+        if(this.movable.y + kitty.y*movable.scaleY > (LD25.STAGE_H-margin_h))
+        	this.movable.y -= ((this.movable.y +kitty.y*movable.scaleY)-(LD25.STAGE_H-margin_h))*speed*delta;
+        
+        this.movable.x = Math.min(0, Math.max(this.movable.x, LD25.STAGE_W-houseFront.width*movable.scaleX));
+        this.movable.y = Math.min(0, Math.max(this.movable.y, LD25.STAGE_H-houseFront.height*movable.scaleY));
+	}
+	@Override
+	public void show() {
+		if(!isScreenLoaded())
+			loadScreen();
+		
+		LD25.stage.addActor(cntnt);
+		restart(LEVEL_DEF.LEVEL_1);
+		
+		darkness.setSprite(SPRITES.BLOCK, LD25.STAGE_W, LD25.STAGE_H);
+		darkness.color.set(0, 0, 0, 1);
+		Tween.to(darkness, ActorAccessor.ALPHA, 3)
+			 .target(0)
+			 .start(LD25.tM);
+		
+		movable.x = (LD25.STAGE_W-houseFront.width*movable.scaleX)/2;
+		movable.y = 0;
+	}
+	@Override
+	public void hide() {
+		LD25.stage.removeActor(cntnt);
+	}
+	
+	@Override
+	public void pause() {}
+	@Override
+	public void resume() {}
+
+	@Override
+	public void call(int type) {}
+
+	public void startDeathAnim(){
+		if(!startedDeathAnim){
+			startedDeathAnim = true;
+			darkness.setSprite(SPRITES.BLOCK, LD25.STAGE_W, LD25.STAGE_H);
+			darkness.color.set(0, 0, 0, 0);
+			Tween.to(darkness, ActorAccessor.ALPHA, 1)
+				 .target(1)
+				 .setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						LD25.me.setScreen(LD25.gver);
+					}
+				})
+				 .start(LD25.tM);
+		}
+	}
+	
+	private final static ATLASES reqAtlases[] = {ATLASES.LEVEL1, 
+								    			 ATLASES.UNIVERSAL};
+	private final static FONTS reqFonts[] = {FONTS.DEBUG};
+	@Override
+	protected ATLASES[] requiredAtlases() {
+		return reqAtlases;
+	}
+	@Override
+	protected FONTS[] requiredFonts() {
+		return reqFonts;
+	}
+
+  //GETTERS
+	public Kitty getKitty(){
+		return kitty;
+	}
+	
+  //CONTACT LISTENER
+	@Override
+	public void beginContact(Contact contact) {
+		Object userDataA = contact.getFixtureA().getBody().getUserData(),
+			   userDataB = contact.getFixtureB().getBody().getUserData();
+		
+		for(int i=0; i<2; i++){
+			if(i == 1){
+				Object tmp = userDataA;
+				userDataA = userDataB;
+				userDataB = tmp;
+			}
+			
+			if(userDataA != null && 
+			   userDataA.getClass().getName().equals(Kitty.class.getName())){
+				
+				if(userDataB != null && 
+				   userDataB.getClass().getName().equals(Human.class.getName())){
+					Kitty kitty = (Kitty)userDataA;
+					Human human = (Human)userDataB;
+					
+					kitty.makeLove(contact.getWorldManifold().getPoints()[0].x,
+								   contact.getWorldManifold().getPoints()[0].y);
+					//human.purrPurr();
+					
+					return;
+				}
+			}
+		}
+		
+		if((userDataA != null && userDataA.getClass().getName().equals(Human.class.getName())))
+			((Human)userDataA).collidedSearchNewDirection();
+		if((userDataB != null && userDataB.getClass().getName().equals(Human.class.getName())))
+			((Human)userDataB).collidedSearchNewDirection();
+	}
+	@Override
+	public void endContact(Contact contact) {
+		
+	}
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold) {
+		
+	}
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse) {
+		
+	}
+}

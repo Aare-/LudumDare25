@@ -1,0 +1,133 @@
+package pl.subfty.ld25;
+
+import pl.subfty.ld25.game.UI;
+import pl.subfty.sub.vision.Art.ATLASES;
+import pl.subfty.sub.vision.Art.FONTS;
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.SpriteActor;
+import pl.subfty.sub.vision.fonts.TextActor;
+import pl.subfty.sub.vision.stage.AScreen;
+import pl.subfty.sub.vision.stage.actors.ActorAccessor;
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
+import com.badlogic.gdx.scenes.scene2d.Group;
+
+public class GameOver extends AScreen{
+	
+	public static boolean victory;
+	
+	private SpriteActor message,
+						screenFiller;
+	private TextActor score;
+	private boolean restarted = false;
+	
+	public GameOver(){
+		message = new SpriteActor();
+		screenFiller = new SpriteActor();
+		cntnt = new Group();
+		
+		
+		score = new TextActor(FONTS.DEBUG, 10);
+		
+		cntnt.addActor(message);
+		cntnt.addActor(screenFiller);
+		cntnt.addActor(score);
+	}
+	
+	@Override
+	public void render(float delta) {
+		// TODO Auto-generated method stub
+		
+		if(!restarted){
+			if(Gdx.input.isKeyPressed(Input.Keys.R)){
+				restarted=true;
+				screenFiller.setSprite(SPRITES.BLOCK, LD25.STAGE_W, LD25.STAGE_H);
+				screenFiller.color.set(0, 0, 0, 0);
+				Tween.to(screenFiller, ActorAccessor.ALPHA, 1)
+					 .target(1)
+					 .setCallback(new TweenCallback() {
+						@Override
+						public void onEvent(int type, BaseTween<?> source) {
+							LD25.me.setScreen(LD25.bk);
+						}
+					})
+					 .start(LD25.tM);
+			}
+		}
+		score.x = 18;
+		score.y = 17;
+	}
+
+	@Override
+	public void show() {
+		if(!isScreenLoaded())
+			loadScreen();
+				
+		if(victory)
+			message.setSprite(SPRITES.VICTORY, LD25.STAGE_W);
+		else
+			message.setSprite(SPRITES.GAME_OVER, LD25.STAGE_W);
+		LD25.stage.addActor(cntnt);
+		
+		screenFiller.setSprite(SPRITES.BLOCK, LD25.STAGE_W, LD25.STAGE_H);
+		screenFiller.color.set(0, 0, 0, 1);
+		Tween.to(screenFiller, ActorAccessor.ALPHA, 1)
+			 .target(0)
+			 .start(LD25.tM);
+		
+		restarted = false;
+		
+		if(victory){
+			score.visible=true;
+			score.setNumber(UI.score, 6);
+			score.x = 20;
+			score.y = 30-1.0f;
+			score.alignment = HAlignment.RIGHT;
+			score.scaleX = score.scaleY = 0.022f;
+			
+		}else{
+			score.visible=false;
+		}
+	}
+
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		LD25.stage.removeActor(cntnt);
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void call(int type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private final static ATLASES reqAtlases[] = {ATLASES.LEVEL1, 
+			 									 ATLASES.UNIVERSAL};
+	private final static FONTS reqFonts[] = {FONTS.DEBUG};
+	@Override
+	protected ATLASES[] requiredAtlases() {
+		return reqAtlases;
+	}
+	@Override
+	protected FONTS[] requiredFonts() {
+		return reqFonts;
+	}
+}

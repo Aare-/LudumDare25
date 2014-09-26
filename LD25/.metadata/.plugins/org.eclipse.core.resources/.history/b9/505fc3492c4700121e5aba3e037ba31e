@@ -1,0 +1,12 @@
+package pl.subfty.ld25.game;
+
+import pl.subfty.sub.vision.Art.SPRITES;
+import pl.subfty.sub.vision.actors.SpriteActor;
+
+public class WayPoint extends SpriteActor{
+	public boolean occupied;
+	
+	public WayPoint(SPRITES sprite, float width){
+		super(sprite, width);
+	}
+}
